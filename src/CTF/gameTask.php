@@ -10,11 +10,10 @@ class GameTask extends PluginTask {
         
         private $plugin;
         
-        private $players = $this->getOwner()->gamePlayers;
         
-        private $status = self::WAITING;
+        private $status = self::QUEUE;
         
-        private $gameTime = $this->getOwner()->config->get("playTime");
+
         
         const QUEUE = 0;
         const PLAYING = 1;
@@ -23,6 +22,9 @@ class GameTask extends PluginTask {
                 parent::__construct($plugin);
                 $this->setHandler($plugin->getServer()->getScheduler()->scheduleRepeatingTask($this, 20));
                 $this->plugin = $plugin;
+				$this->players = $this->getOwner()->gamePlayers;
+				$this->gameTime = $this->getOwner()->config->get("playTime");
+
         }
         
         public function onRun($tick) {
