@@ -38,6 +38,7 @@ class Main extends PluginBase implements Listener {
 			@mkdir($this->getDataFolder());
                 $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML,array(
 		"playTime" => 900));
+		$this->config->save();
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
                 $this->startGame();
                 $this->getServer()->getLogger()->info("Capture the flag has been enabled!");
@@ -79,11 +80,13 @@ class Main extends PluginBase implements Listener {
         public function addRedPlayer(Player $p) {
                 $this->redPlayers[$p->getName()] = $p;
                 $p->sendMessage("You have joined the red team!");
+				$p->setNameTag("[RED]".$p->getName());
         }
 
         public function addBluePlayer(Player $p) {
                 $this->bluePlayers[$p->getName()] = $p;
                 $p->sendMessage("You have joined the blue team!");
+				$p->setNameTag("[BLUE]".$p->getName());
         }
 
         public function pickTeam(Player $p) {
