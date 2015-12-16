@@ -14,9 +14,9 @@ use pocketmine\command\CommandSender;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 
-use CTF\Tasks\gameTask;
-use CTF\Tasks\kickTask;
-use CTF\Tasks\worldTask;
+use CTF\gameTask;
+use CTF\kickTask;
+use CTF\worldTask;
 
 class Main extends PluginBase implements Listener {
         
@@ -204,6 +204,23 @@ $world = $server->getDataPath() . "worlds/".$levelName."/region/";
  $this->recurse_copy($server->getDataPath()."worlds/Backups/".$levelName."/",$server->getDataPath()."worlds/".$levelName."/");
   $this->getLogger()->info("RESTORED WORLD!");
 }
+
+public function recurse_copy($src,$dst) {
+    $dir = opendir($src);
+    @mkdir($dst);
+    while(false !== ( $file = readdir($dir)) ) {
+        if (( $file != '.' ) && ( $file != '..' )) {
+            if ( is_dir($src . '/' . $file) ) {
+                $this->recurse_copy($src . '/' . $file,$dst . '/' . $file);
+            }
+            else {
+                copy($src . '/' . $file,$dst . '/' . $file);
+            }
+        }
+    }
+    closedir($dir);
+    } 
+    
 
 public static function file_delDir($dir){
   $dir = rtrim($dir, "/\\") . "/";
