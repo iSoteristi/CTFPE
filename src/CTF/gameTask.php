@@ -13,8 +13,6 @@ class GameTask extends PluginTask {
         
         private $status = self::QUEUE;
         
-
-        
         const QUEUE = 0;
         const PLAYING = 1;
 
@@ -22,33 +20,35 @@ class GameTask extends PluginTask {
                 parent::__construct($plugin);
                 $this->setHandler($plugin->getServer()->getScheduler()->scheduleRepeatingTask($this, 20));
                 $this->plugin = $plugin;
-				$this->players = $this->getOwner()->gamePlayers;
 				$this->gameTime = $this->getOwner()->config->get("playTime");
-
-        }
+                $this->players = $this->plugin->gamePlayers;
+				$this->max = 10;
+				 }
         
         public function onRun($tick) {
                 $this->checkPlayers();
-                if($this->status === self::QUEUE and count($this->players) < 10) {
-                        foreach($this->players as $p) {
-                                $p->sendTip("Waiting for players (" . count($this->players) . "/10");
+                if($this->status === self::QUEUE and count($this->plugin->getServer()->getOnlinePlayers()) < 4) {
+                        foreach($this->plugin->getServer()->getOnlinePlayers() as $p) {
+                                $p->sendTip("Waiting for more players![".count($this->players)."/".count($this->max)."]");
+								
                         }
                 } else {
                         $this->status = self::PLAYING;
                 }
-                if($this->status === self::PLAYING and count($this->players) >= 4) {
+				
+                if($this->status === self::PLAYING) {
                         $this->gameTime--;
-                        foreach($this->players as $p) {
+                        foreach($this->plugin->getServer()->getOnlinePlayers() as $p) {
                                 $p->sendTip("Game will end in " . $this->plugin->seconds2string($this->gameTime));
                         }
                 } else {
-                        $this->plugin->reset();
+                       //stupid idea jack $this->plugin->reset();
                 }
         }
         
         public function checkPlayers() {
-                foreach($this->players as $key => $p) {
-                        if(!$p instanceof Player) unset($this->players[$key]);
+                foreach($this->plugin->getServer()->getOnlinePlayers() as $key => $p) {
+                        if(!$p instanceof Player) unset($this->plugin->getServer()->getOnlinePlayers()[$key]);
                 }
         }
         
