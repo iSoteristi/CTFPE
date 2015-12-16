@@ -1,6 +1,11 @@
-name: CTFPE
-authors: Jack Noordhuis, Savion
-version: 0.0.1_Alpha
-description: CTF for PE
+name: CTF
+api: [1.12.0]
+author: SavionLegendZzz
+version: 1.0
+description: CTF
 main: CTF\Main
-api: 1.13.0
+commands:
+ ctf:
+  permission: ctf.command.ctf
+  description: ctf command
+  usage: /ctf set|restart
