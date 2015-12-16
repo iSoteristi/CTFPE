@@ -10,13 +10,13 @@ class GameTask extends PluginTask {
         
         private $plugin;
         
-        private $players = [];
+        private $players = $this->getOwner()->gamePlayers;
         
         private $status = self::WAITING;
         
-        private $gameTime = 60 * 10;
+        private $gameTime = $this->getOwner()->get("playTime");
         
-        const WAITING = 0;
+        const QUEUE = 0;
         const PLAYING = 1;
 
         public function __construct(Main $plugin) {
@@ -27,7 +27,7 @@ class GameTask extends PluginTask {
         
         public function onRun($tick) {
                 $this->checkPlayers();
-                if($this->status === self::WAITNIGNG and count($this->players) < 10) {
+                if($this->status === self::QUEUE and count($this->players) < 10) {
                         foreach($this->players as $p) {
                                 $p->sendTip("Waiting for players (" . count($this->players) . "/10");
                         }
