@@ -33,9 +33,7 @@ class Main extends PluginBase implements Listener {
 		
 		public $gamePlayers = [];
 		
-		public $redPoints = 0;
-		
-		public $world = $this->config->get("level");
+		public $redPoints = 0;		
     
         public function onEnable() {
 			@mkdir($this->getDataFolder());
@@ -45,6 +43,7 @@ class Main extends PluginBase implements Listener {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
                 $this->startGame();
                 $this->getServer()->getLogger()->info("Capture the flag has been enabled!");
+				$this->world = $this->config->get("level");
         }
 		
 		public function onCommand(CommandSender $sender, Command $command, $label, array $args)
