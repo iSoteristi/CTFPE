@@ -29,7 +29,7 @@ class GameTask extends PluginTask {
                 $this->checkPlayers();
                 if($this->status === self::QUEUE and count($this->plugin->getServer()->getOnlinePlayers()) < 4) {
                         foreach($this->plugin->getServer()->getOnlinePlayers() as $p) {
-                                $p->sendTip("Waiting for more players![".count($this->players)."/".count($this->max)."]");
+                                $p->sendTip("Waiting for more players![".count($this->players)."/".count($this->max)."] 4 or more are needed");
 								
                         }
                 } else {
