@@ -94,10 +94,12 @@ class Main extends PluginBase implements Listener {
                 if(count($this->bluePlayers) < count($this->redPlayers)) {
                         $this->addBluePlayer($p);
 						$this->addGamePlayer($p);
-						} elseif(count($this->redPlayers) < count($this->bluePlayers)) {
+						} else {
+							(count($this->redPlayers) < count($this->bluePlayers)) 
                         $this->addRedPlayer($p);
 						$this->addGamePlayer($p);
-                } else {
+                }
+				if(count($this->redPlayers) === 5 && count($this->bluePlayers) ===5){
                         $p->sendMessage("All teams are full!\n Removing you from the server in 2 seconds!");
                         new kickTask($this, $p);
                 }
@@ -181,7 +183,7 @@ class Main extends PluginBase implements Listener {
 			}
 		}
 }
-		
+
  public function resetLevel($levelName, $backupPath){    
   $server = $this->getServer();
   $lv = $server->getLevelByName($levelName);
