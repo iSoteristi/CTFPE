@@ -14,8 +14,9 @@ use pocketmine\command\CommandSender;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 
-use CTF\GameTask;
-use CTF\kickTask;
+use CTF\Tasks\gameTask;
+use CTF\Tasks\kickTask;
+use CTF\Tasks\worldTask;
 
 class Main extends PluginBase implements Listener {
         
@@ -69,7 +70,7 @@ class Main extends PluginBase implements Listener {
 }
 
         public function startGame() {
-           /*ummm*/
+		   new gameTask($this,$this);
         }
         
         public function reset() {
