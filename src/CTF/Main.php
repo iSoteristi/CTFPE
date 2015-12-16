@@ -19,7 +19,7 @@ use CTF\kickTask;
 
 class Main extends PluginBase implements Listener {
         
-        private $config = [];
+   //     private $config = [];
         
         private $tasks = [];
         
@@ -34,15 +34,15 @@ class Main extends PluginBase implements Listener {
 		public $redPoints = 0;
     
         public function onEnable() {
-                $this->saveResource("config.yml", false);
-                $this->config = (new Config($this->getDataFolder() . "config.yml", Config::YAML)))->getAll();
+                //$this->saveResource("config.yml", false);
+                $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
                 $this->startGame();
                 $this->getServer()->getLogger()->info("Capture the flag has been enabled!");
         }
         
         public function startGame() {
-                if($this->task instanceof GameTask) return;
+                if($this->tasks instanceof GameTask) return;
         }
         
         public function reset() {
@@ -60,7 +60,7 @@ class Main extends PluginBase implements Listener {
         }
 
         public function pickTeam(Player $p) {
-			if(!$this->getConfig()->exsists("Blue-flag-return"){
+			if(!$this->getConfig()->exists("Blue-flag-return")){
 				$p->sendMessage("The game isn't set up please set up the match and restart the server!");
 				return;
 			}
