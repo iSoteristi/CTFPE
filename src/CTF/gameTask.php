@@ -47,8 +47,8 @@ class GameTask extends PluginTask {
         }
         
         public function checkPlayers() {
-                foreach($this->plugin->getServer()->getOnlinePlayers() as $key => $p) {
-                        if(!$p instanceof Player) unset($this->plugin->getServer()->getOnlinePlayers()[$key]);
+                foreach($this->players as $key => $p) {
+                        if(!$p instanceof Player) unset($this->players[$key]);
                 }
         }
         
