@@ -57,11 +57,13 @@ class Main extends PluginBase implements Listener {
 		$this->Setter[$sender->getName()]=0;
 		$sender->sendMessage("Please tap the Red-flag block!");
 		break;
-        }
+        
 		
 		case "restart":
 		$this->reset();
 		break;
+
+			}
 }
 
         public function startGame() {
@@ -90,7 +92,7 @@ class Main extends PluginBase implements Listener {
         }
 
         public function pickTeam(Player $p) {
-			if(!$this->getConfig()->exsists("Blue-flag-return"){
+			if(!$this->getConfig()->exsists("Blue-flag-return")){
 				$p->sendMessage("The game isn't set up please set up the match and restart the server!");
 				return;
 			}
@@ -98,10 +100,11 @@ class Main extends PluginBase implements Listener {
                         $this->addBluePlayer($p);
 						$this->addGamePlayer($p);
 						} else {
-							(count($this->redPlayers) < count($this->bluePlayers)) 
+							if(count($this->redPlayers) < count($this->bluePlayers)){
                         $this->addRedPlayer($p);
 						$this->addGamePlayer($p);
                 }
+						}
 				if(count($this->redPlayers) === 5 && count($this->bluePlayers) ===5){
                         $p->sendMessage("All teams are full!\n Removing you from the server in 2 seconds!");
                         new kickTask($this, $p);
