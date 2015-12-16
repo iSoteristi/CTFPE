@@ -1,75 +1,73 @@
 <?php
-namespace CTF;
 
+namespace CTF;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
-
 use pocketmine\Player;
-use pocketmine\Server;
-
 use pocketmine\utils\Config;
-
 use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\event\entity\EntityDamageByChildEntityEvent;
-
 use pocketmine\event\player\PlayerJoinEvent;
 
+use CTF\GameTask;
+use CTF\kickTask;
 
-class Main extends PluginBase implements Listener
-{
-
-    public function onLoad(){
-       @mkdir($this->getDataFolder());
-        $this->config = new Config($this->getDataFolder()."config.yml", Config::YAML, array(/*todo*/));
-		$this->config->save();
-        $this->getServer()->getLogger()->info("[CTF]Plugin is loading!");
-     }
-}
+class Main extends PluginBase implements Listener {
+        
+        private $config = [];
+        
+        private $tasks = [];
+        
+        public $redPlayers = [];
+        
+        public $bluePlayers = [];
     
-    public function onEnable() {
-		$this->getServer()->getPluginManager()->registerEvents($this,$this);
-		$this->getServer()->getScheduler()->scheduleRepeatingTask(new gameTask($this),20);
-        $this->getServer()->getLogger()->info("[CTF]Plugin has been enabled!");
-		$this->redPlayers = []; //max amount is 5
-		$this->bluePlayers = [];
-		$this->kick = [];
-											  
-} 
+        public function onEnable() {
+                $this->saveResource("config.yml", false);
+                $this->config = (new Config($this->getDataFolder() . "config.yml", Config::YAML)))->getAll();
+		$this->getServer()->getPluginManager()->registerEvents($this, $this);
+                $this->startGame();
+                $this->getServer()->getLogger()->info("Capture the flag has been enabled!");
+        }
+        
+        public function startGame() {
+                if($this->task instanceof GameTask) return;
+        }
+        
+        public function reset() {
+                $this->getServer()->shutdown();
+        }
 
+        public function addRedPlayer(Player $p) {
+                $this->redPlayers[$p->getName()] = $p;
+                $p->sendMessage("You have joined the red team!");
+        }
 
-public function addRedPlayer(Player $p){
-	$this->redPlayers[$p->getName()] = array("red" => $p->getName());
-}
+        public function addBluePlayer(Player $p) {
+                $this->bluePlayers[$p->getName()] = $p;
+                $p->sendMessage("You have joined the blue team!");
+        }
 
-public function addBluePlayer(Player $p){
-	$this->bluePlayers[$p->getName()] = array("blue" => $p->getName());
-}
+        public function pickTeam(Player $p) {
+                if(count($this->bluePlayers) < count($this->redPlayers)) {
+                        $this->addBluePlayer($p);
+                } elseif(count($this->redPlayers) < count($this->bluePlayers)) {
+                        $this->addRedPlayer($p);
+                } else {
+                        $p->sendMessage("All teams are full!\n Removing you from the server in 2 seconds!");
+                        new kickTask($this, $p);
+                }
+        }
 
-public function pickTeam(Player $p){
-if(count($this->redPlayers) === 5 && count($this->bluePlayers) === 5){
-	$p->sendMessage("All teams are full! Removing you from the server! in 2 seconds!");
-	array_push($this->kick,$p);
-	$task = new kickTask($this, $this);
-	$this->getServer()->getScheduler()->scheduleDelayedTask($task, 20*2);
-	return;
-} 
-
-if(count($this->bluePlayers) < count($this->redPlayers)){
-	$this->addBluePlayer($p);
-	//tp to blue spot
-}else{
-	$this->addRedPlayer($p);
-	//tp to red spot
-}
-
-}
-
-
-public function onJoin(PlayerJoinEvent $ev){
-	$p = $ev->getPlayer();
-	$this->pickTeam($p);
-	
-}
+        public function onJoin(PlayerJoinEvent $ev) {
+                $p = $ev->getPlayer();
+                $this->pickTeam($p);
+        }
+        
+        public function seconds2string($int) {
+                $m = floor($int / 60);
+                $s = floor($int % 60);
+                return (($m < 10 ? "0" : "") . $m . ":" . ($s < 10 ? "0" : "") . $s);
+        }
 
 }
