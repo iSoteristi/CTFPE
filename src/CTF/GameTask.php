@@ -37,7 +37,7 @@ class GameTask extends PluginTask {
                 if($this->status === self::PLAYING and count($this->players) >= 4) {
                         $this->gameTime--;
                         foreach($this->players as $p) {
-                                $p->sendTip("Game will end in " . $this->plugin->seconds2string($this->seconds));
+                                $p->sendTip("Game will end in " . $this->plugin->seconds2string($this->gameTime));
                         }
                 } else {
                         $this->plugin->reset();
