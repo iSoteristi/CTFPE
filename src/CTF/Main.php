@@ -19,7 +19,6 @@ use CTF\kickTask;
 
 class Main extends PluginBase implements Listener {
         
-   //     private $config = [];
         
         private $tasks = [];
         
@@ -31,22 +30,50 @@ class Main extends PluginBase implements Listener {
 		
 		public $bluePoints = 0;
 		
+		public $gamePlayers = [];
+		
 		public $redPoints = 0;
     
         public function onEnable() {
-                //$this->saveResource("config.yml", false);
-                $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
+			@mkdir($this->getDataFolder());
+                $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML,array(
+		"playTime" => 900));
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
                 $this->startGame();
                 $this->getServer()->getLogger()->info("Capture the flag has been enabled!");
         }
-        
+		
+		public function onCommand(CommandSender $sender, Command $command, $label, array $args)
+	        {
+		if(!isset($args[0])){
+			unset($sender,$cmd,$label,$args);
+			return false;
+			
+		}
+		switch ($args[0])
+		{
+		case "set":
+		$this->Setter[$sender->getName()]=0;
+		$sender->sendMessage("Please tap the Red-flag block!");
+		break;
+        }
+		
+		case "restart":
+		$this->reset();
+		break;
+}
+
         public function startGame() {
-                if($this->tasks instanceof GameTask) return;
+           /*ummm*/
         }
         
         public function reset() {
-                $this->getServer()->shutdown();
+				$levelName = $this->world;
+	 	 $backupPath = $this->getServer()->getDataPath()."worlds/"; 
+	 	 $this->resetLevel($levelName,$backupPath);
+	 	 	$task = new worldTask($this, $this);
+		 	$this->getServer()->getScheduler()->scheduleDelayedTask($task, 0.5);
+			$this->getServer()->shutdown();
         }
 
         public function addRedPlayer(Player $p) {
@@ -60,14 +87,16 @@ class Main extends PluginBase implements Listener {
         }
 
         public function pickTeam(Player $p) {
-			if(!$this->getConfig()->exists("Blue-flag-return")){
+			if(!$this->getConfig()->exsists("Blue-flag-return"){
 				$p->sendMessage("The game isn't set up please set up the match and restart the server!");
 				return;
 			}
                 if(count($this->bluePlayers) < count($this->redPlayers)) {
                         $this->addBluePlayer($p);
-                } elseif(count($this->redPlayers) < count($this->bluePlayers)) {
+						$this->addGamePlayer($p);
+						} elseif(count($this->redPlayers) < count($this->bluePlayers)) {
                         $this->addRedPlayer($p);
+						$this->addGamePlayer($p);
                 } else {
                         $p->sendMessage("All teams are full!\n Removing you from the server in 2 seconds!");
                         new kickTask($this, $p);
@@ -85,11 +114,15 @@ class Main extends PluginBase implements Listener {
                 return (($m < 10 ? "0" : "") . $m . ":" . ($s < 10 ? "0" : "") . $s);
         }
 		
+		public function addGamePlayer(Player $p){
+			$this->gamePlayers[$p->getName()] = $p;
+		}
+		
 		public function gameSet(PlayerInteractEvent $ev){
 		$p = $ev->getPlayer();
 	    $usrname = $p->getName();
 		$block = $ev->getBlock();
-		$levelname = $p->getLevel()->getName();
+		$levelname = $p->getLevel()->getFolderName();
 		
 		if(isset($this->Setter[$usrname])){
 			switch($this->Setter[$usrname]){
@@ -136,6 +169,7 @@ class Main extends PluginBase implements Listener {
 					"z" =>$block->getZ(),
 					"level" =>$levelname);
 				    $this->config->set("Blue-flag-return",$this->blueFlagReturn);
+					$this->config->set("level",$levelname);
 				    $this->config->save();
 					$p->sendMessage("Set up is done, you can now play!");
 					unset($this->Setter[$usrname]);
@@ -146,6 +180,35 @@ class Main extends PluginBase implements Listener {
 				
 			}
 		}
-		}
+}
+		
+ public function resetLevel($levelName, $backupPath){    
+  $server = $this->getServer();
+  $lv = $server->getLevelByName($levelName);
+ $worldPath = $server->getDataPath() . "worlds/".$levelName; 
+$world = $server->getDataPath() . "worlds/".$levelName."/region/";
+  $level = $this->config->get("pos1")["level"];
+  
+  self::file_delDir($worldPath);
+  $this->getLogger()->info("DELETED WORLD REGION!");
+ $this->recurse_copy($server->getDataPath()."worlds/Backups/".$levelName."/",$server->getDataPath()."worlds/".$levelName."/");
+  $this->getLogger()->info("RESTORED WORLD!");
+}
+
+public static function file_delDir($dir){
+  $dir = rtrim($dir, "/\\") . "/";
+  foreach(scandir($dir) as $file){
+    if($file === "." or $file === ".."){ 
+      continue;
+    }
+    $path = $dir . $file;
+    if(is_dir($path)){
+      self::file_delDir($path);
+    }else{
+      unlink($path);
+    }
+  }
+  rmdir($dir);
+}
 
 }
