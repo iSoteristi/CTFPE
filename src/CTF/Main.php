@@ -26,13 +26,15 @@ class Main extends PluginBase implements Listener {
         
         public $bluePlayers = [];
 		
-		public $Setter = 0;
+		public $Setter = [];
 		
 		public $bluePoints = 0;
 		
 		public $gamePlayers = [];
 		
 		public $redPoints = 0;
+		
+		public $world = $this->config->get("level");
     
         public function onEnable() {
 			@mkdir($this->getDataFolder());
