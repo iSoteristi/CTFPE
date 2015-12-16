@@ -14,7 +14,7 @@ class GameTask extends PluginTask {
         
         private $status = self::WAITING;
         
-        private $gameTime = $this->getOwner()->get("playTime");
+        private $gameTime = $this->getOwner()->config->get("playTime");
         
         const QUEUE = 0;
         const PLAYING = 1;
