@@ -2,24 +2,27 @@
 namespace CTF;
 
 use pocketmine\scheduler\PluginTask;
-use pocketmine\plugin\Plugin;
 use pocketmine\Player;
 
-class kickTask extends PluginTask{
-	public $player;
-	public function __construct(Plugin $owner, Player $player){
-		parent::__construct($owner);
+use CTF\Main;
+
+class kickTask extends PluginTask {
+        
+        private $plugin;
+        
+        private $player;
+        
+	public function __construct(Main $plugin, Player $player){
+		parent::__construct($plugin);
+                $this->setHandler($plugin->getServer()->getScheduler()->scheduleDelayedTask($this, 20 * 2));
+                $this->plugin = $plugin;
 		$this->player = $player;
-		 $config = $this->getOwner()->getConfig();
 	}
 	
-	
-	public function onRun($currentTick){
-		if($this->player instanceof Player){
-			if(in_array($this->player->getName(), $this->getOwner()->kick)){
-				unset($this->getOwner()->compass[$id]);
-				$this->player->close("","You have been kicked!");
-				}
+	public function onRun($tick){
+                if($this->player instanceof Player) {
+                        $this->player->kick("All teams were full!");
+                }
+                $this->plugin->getServer()->getScheduler()->cancelTask($this->getTaskId());
 	}
-}
 }

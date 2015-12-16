@@ -1,0 +1,6 @@
+name: CTFPE
+authors: Jack Noordhuis, Savion
+version: 0.0.1_Alpha
+description: CTF for PE
+main: CTF\Main
+api: 1.13.0
