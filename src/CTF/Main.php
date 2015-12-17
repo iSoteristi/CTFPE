@@ -21,17 +21,10 @@ use CTF\worldTask;
 class Main extends PluginBase implements Listener {
         
         
-        private $tasks = [];
-        
-        public $redPlayers = [];
-        
-        public $bluePlayers = [];
 		
-		public $Setter = [];
 		
 		public $bluePoints = 0;
 		
-		public $gamePlayers = [];
 		
 		public $redPoints = 0;		
     
@@ -43,7 +36,12 @@ class Main extends PluginBase implements Listener {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
                 $this->startGame();
                 $this->getServer()->getLogger()->info("Capture the flag has been enabled!");
+				
 				$this->world = $this->config->get("level");
+				$this->gamePlayers=array();
+				$this->redPlayers=array();
+				$this->bluePlayers=array();
+				$this->Setter=array();
         }
 		
 		public function onCommand(CommandSender $sender, Command $command, $label, array $args)
@@ -82,32 +80,42 @@ class Main extends PluginBase implements Listener {
         }
 
         public function addRedPlayer(Player $p) {
-                $this->redPlayers[$p->getName()] = $p;
+                $this->redPlayers[$p->getName()] = array("red" => $p->getName());
                 $p->sendMessage("You have joined the red team!");
-				$p->setNameTag("[RED]".$p->getName());
+				$p->setDisplayName("[RED]".$p->getName());
         }
 
         public function addBluePlayer(Player $p) {
-                $this->bluePlayers[$p->getName()] = $p;
+                $this->bluePlayers[$p->getName()] = array("blue" => $p->getName());
                 $p->sendMessage("You have joined the blue team!");
-				$p->setNameTag("[BLUE]".$p->getName());
+				$p->setDisplayName("[BLUE]".$p->getName());
         }
 
         public function pickTeam(Player $p) {
-			if(!$this->getConfig()->exsists("Blue-flag-return")){
+			/*if($this->config->exists("Blue-flag-return")){
 				$p->sendMessage("The game isn't set up please set up the match and restart the server!");
 				return;
-			}
-                if(count($this->bluePlayers) < count($this->redPlayers)) {
+			}*/
+			if(count($this->redPlayers) === 0 && count($this->bluePlayers) === 0){
+                        $p->sendMessage("You have joined the blue team by default");
                         $this->addBluePlayer($p);
 						$this->addGamePlayer($p);
-						} else {
-							if(count($this->redPlayers) < count($this->bluePlayers)){
+						echo var_dump($this->bluePlayers);
+						return;
+                }
+				
+               if(count($this->redPlayers) < count($this->bluePlayers)){
                         $this->addRedPlayer($p);
 						$this->addGamePlayer($p);
+						
+						} else {
+							
+						 if(count($this->bluePlayers) < count($this->redPlayers)) {
+                        $this->addBluePlayer($p);
+						$this->addGamePlayer($p);
                 }
-						}
-				if(count($this->redPlayers) === 5 && count($this->bluePlayers) ===5){
+			}
+				if(count($this->redPlayers) === 5 && count($this->bluePlayers) === 5 && $this->gamePlayers === 10){
                         $p->sendMessage("All teams are full!\n Removing you from the server in 2 seconds!");
                         new kickTask($this, $p);
                 }
@@ -125,7 +133,7 @@ class Main extends PluginBase implements Listener {
         }
 		
 		public function addGamePlayer(Player $p){
-			$this->gamePlayers[$p->getName()] = $p;
+			$this->gamePlayers[$p->getName()] = array("player" => $p->getName());
 		}
 		
 		public function gameSet(PlayerInteractEvent $ev){
