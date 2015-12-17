@@ -92,10 +92,10 @@ class Main extends PluginBase implements Listener {
         }
 
         public function pickTeam(Player $p) {
-			/*if($this->config->exists("Blue-flag-return")){
+			if($this->config->exists("Blue-flag-return")){
 				$p->sendMessage("The game isn't set up please set up the match and restart the server!");
 				return;
-			}*/
+			}
 			if(count($this->redPlayers) === 0 && count($this->bluePlayers) === 0){
                         $p->sendMessage("You have joined the blue team by default");
                         $this->addBluePlayer($p);
