@@ -13,6 +13,7 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\player\PlayerKickEvent;
 
 use CTF\gameTask;
 use CTF\kickTask;
@@ -198,6 +199,19 @@ class Main extends PluginBase implements Listener {
 				
 			}
 		}
+}
+
+public function onKick(PlayerKickEvent $ev){
+	$p = $ev->getPlayer();
+	if(isset($this->gamePlayers[$p->getName()){
+		unset($this->gamePlayers[$p->getName()]);
+	}
+	if(isset($this->redPlayers[$p->getName()){
+		unset($this->redPlayers[$p->getName()]);
+	}
+	if(isset($this->bluePlayers[$p->getName()){
+		unset($this->bluePlayers[$p->getName()]);
+	}
 }
 
  public function resetLevel($levelName, $backupPath){    
