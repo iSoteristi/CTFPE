@@ -1,8 +1,8 @@
-name: CTF
+name: CaptureTheFlagMGI
 api: [1.12.0]
-author: SavionLegendZzz
+author: robozeri
 version: 1.0
-description: CTF
+description: Base of Capture the flag
 main: CTF\Main
 commands:
  ctf:
