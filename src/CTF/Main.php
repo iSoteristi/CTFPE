@@ -126,7 +126,6 @@ class Main extends PluginBase implements Listener {
                 $p = $ev->getPlayer();
                 $this->pickTeam($p);
                 $this->getServer()->getScheduler()->scheduleRepeatingTask(new Task($this, $this->cfg->get("duration")), 10);
-                $type = $this->cfg->get("type");
                 $message = "Blue point" . $bluepoints . "Red point" . $redpoints;
 		$event->getPlayer()->sendPopup($message);
 		
