@@ -125,6 +125,11 @@ class Main extends PluginBase implements Listener {
         public function onJoin(PlayerJoinEvent $ev) {
                 $p = $ev->getPlayer();
                 $this->pickTeam($p);
+                $this->getServer()->getScheduler()->scheduleRepeatingTask(new Task($this, $this->cfg->get("duration")), 10);
+                $type = $this->cfg->get("type");
+                $message = "Blue point" . $bluepoints . "Red point" . $redpoints;
+		$event->getPlayer()->sendPopup($message);
+		
         }
         
         public function seconds2string($int) {
